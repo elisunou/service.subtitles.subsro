@@ -1,0 +1,72 @@
+import xbmc
+import xbmcgui
+import xbmcaddon
+import xbmcvfs
+import requests
+import os
+
+ADDON = xbmcaddon.Addon()
+API_KEY = "CHEIA_TA_AICI"  # Ar trebui preluată din setările add-on-ului
+BASE_URL = "https://subs.ro/api/v1.0"
+
+def log(msg):
+    xbmc.log(f"Subs.ro: {msg}", xbmc.LOGINFO)
+
+def search(item):
+    # Kodi trimite detalii despre film (imdb, titlu, an)
+    search_field = "imdbid"
+    search_value = item.get('imdbid')
+
+    if not search_value:
+        search_field = "title"
+        search_value = item.get('title')
+
+    url = f"{BASE_URL}/search/{search_field}/{search_value}"
+    headers = {"X-Subs-Api-Key": API_KEY}
+    
+    try:
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        
+        if data.get('status') == 200:
+            for sub in data.get('items', []):
+                # Creăm un obiect de listă pentru Kodi
+                list_item = xbmcgui.ListItem(label=sub['title'])
+                # Adăugăm metadate utile
+                list_item.setArt({'poster': sub.get('poster')})
+                
+                # Transmitem ID-ul către funcția de download
+                url_download = f"plugin://service.subtitles.subsro/?action=download&id={sub['id']}"
+                xbmcgui.Window(10000).setProperty("subs.ro.id", str(sub['id']))
+                
+                # Adăugăm rezultatul în interfața Kodi
+                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url_download, listitem=list_item, isFolder=False)
+    except Exception as e:
+        log(f"Eroare la căutare: {e}")
+
+def download(sub_id):
+    dest_path = os.path.join(xbmcvfs.translatePath(ADDON.getAddonInfo('path')), "temp_sub.zip")
+    url = f"{BASE_URL}/subtitle/{sub_id}/download"
+    headers = {"X-Subs-Api-Key": API_KEY}
+
+    try:
+        r = requests.get(url, headers=headers, stream=True)
+        with open(dest_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+        
+        # Kodi are nevoie de calea către fișierul descărcat
+        # Notă: Dacă e ZIP, trebuie dezarhivat înainte de a returna calea către .srt
+        return dest_path
+    except Exception as e:
+        log(f"Eroare la download: {e}")
+
+# Main execution loop
+params = dict(parse_qsl(sys.argv[2][1:]))
+action = params.get('action')
+
+if action == 'search':
+    # Kodi apelează căutarea
+    search(xbmc.getInfoLabel('VideoPlayer.Title')) # Exemplu simplificat
+elif action == 'download':
+    download(params.get('id'))
