@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <section id="service.subtitles.subsro">
+        <category label="General">
+            <setting id="api_key" type="text" label="API Key Subs.ro" default=""/>
+        </category>
+    </section>
+</settings>
