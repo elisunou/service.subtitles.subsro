@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<settings>
+<settings version="1">
     <section id="service.subtitles.subsro">
-        <category label="General">
-            <setting id="api_key" type="text" label="API Key Subs.ro" default=""/>
+        <category label="30000"> <group id="1" label="Autentificare">
+                <setting id="api_key" type="string" label="API Key Subs.ro">
+                    <level>0</level>
+                    <default></default>
+                    <control type="edit" format="string">
+                        <heading>Introdu API Key de pe Subs.ro</heading>
+                    </control>
+                </setting>
+            </group>
         </category>
     </section>
 </settings>
