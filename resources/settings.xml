@@ -1,1 +1,18 @@
 
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings>
+    <category label="Configurare API">
+        <setting id="api_key" type="text" label="Cheie API Subs.ro" default="">
+            <level>0</level>
+            <help>Introdu cheia ta API de la https://www.subs.ro/api</help>
+        </setting>
+    </category>
+    
+    <category label="Informații">
+        <setting id="info_header" type="lsep" label="Cum obțin o cheie API?"/>
+        <setting id="info_step1" type="lsep" label="1. Mergi pe https://www.subs.ro/api"/>
+        <setting id="info_step2" type="lsep" label="2. Autentifică-te cu contul tău"/>
+        <setting id="info_step3" type="lsep" label="3. Generează o cheie API nouă"/>
+        <setting id="info_step4" type="lsep" label="4. Copiază cheia și introdu-o mai sus"/>
+    </category>
+</settings>
